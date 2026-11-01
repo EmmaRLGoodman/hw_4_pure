@@ -42,7 +42,7 @@ def sum_view(request: HttpRequest) -> HttpResponse:
     return HttpResponse(_decimal_to_str(val), content_type="text/plain")
 
 def index(request):
-    time = time_view(request).text
+    time = time_view(request).content
     return render(request, 'app/index.html', {'time': time, 'user': request.user})
 
 def new(request):
