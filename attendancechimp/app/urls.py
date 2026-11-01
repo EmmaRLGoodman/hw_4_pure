@@ -5,4 +5,8 @@ urlpatterns = [
     # HW2
     path('time', views.time_view, name='time'),
     path('sum', views.sum_view, name='sum'),
+    path('', views.index, name='home'),
+    path('index.html',views.index, name='index.html'),
+    path('createUser', views.createUser, name='createUser'),
+    path('new', views.new, name='new')
 ]

@@ -4,7 +4,13 @@ from datetime import datetime
 from decimal import Decimal, InvalidOperation
 from zoneinfo import ZoneInfo
 
-from django.http import HttpRequest, HttpResponse
+from django.http import HttpRequest, HttpResponse, JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from django.shortcuts import render
+from django.contrib.auth.models import User
+
+
+from .models import StudentProfile, InstructorProfile
 
 CDT = ZoneInfo("America/Chicago")
 
@@ -34,3 +40,29 @@ def sum_view(request: HttpRequest) -> HttpResponse:
         return HttpResponse("Bad Request: n1 and n2 must be numbers", status=400, content_type="text/plain")
 
     return HttpResponse(_decimal_to_str(val), content_type="text/plain")
+
+def index(request):
+    time = time_view(request).text
+    return render(request, 'app/index.html', {'time': time, 'user': request.user})
+
+def new(request):
+    if not request.method == "GET":
+        return HttpResponse("Bad Request: New user template only accepts GET requests", status=405, content_type="text/plain")
+    return render(request, 'app/new.html',{})
+
+@csrf_exempt
+def createUser(request):
+    if not request.method == "POST":
+        return HttpResponse("Bad Request: Create user template only accepts POST requests", status=405, content_type="text/plain")
+    email = request.POST.get("email")
+    user_name = request.POST.get("user_name")
+    password = request.POST.get("password")
+    is_student = request.POST.get("is_student")
+    if User.objects.filter(email=email).exists():
+        return HttpResponse("Bad Request: Email already in database", status=403, content_type="text/plain")
+    my_user = User.objects.create_user(username = user_name,password = password,email = email)
+    if is_student:
+        StudentProfile(my_user)
+    else:
+        InstructorProfile(my_user)
+    return render(request, 'app/createUser.html',{})

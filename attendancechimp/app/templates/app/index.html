@@ -1,0 +1,17 @@
+<html>
+<head>
+<style>
+.center { text-align: center; }
+</style>
+</head>
+<body>
+<h1 class="center">AttendanceChimp</h1>
+<p class="center">Attendance checking for the internet age. Just scan the QR code!</p>
+{% if not user.is_authenticated %}
+<p class="center">Not logged in.</p>
+{% else %}
+<p class="center">Current user is <b> {{ user }} </b></p>
+{% endif %}
+<p class="center">The current time is {{ time }}</p>
+</body>
+</html>
